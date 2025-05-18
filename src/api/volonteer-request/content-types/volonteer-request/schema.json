@@ -1,0 +1,33 @@
+{
+  "kind": "collectionType",
+  "collectionName": "volonteer_requests",
+  "info": {
+    "singularName": "volonteer-request",
+    "pluralName": "volonteer-requests",
+    "displayName": "volonteerRequest"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "volunteerImage": {
+      "allowedTypes": [
+        "images"
+      ],
+      "type": "media",
+      "multiple": false,
+      "required": true
+    },
+    "requestApproved": {
+      "type": "boolean",
+      "default": false,
+      "required": true
+    },
+    "user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user",
+      "mappedBy": "volunteer_request"
+    }
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "kind": "collectionType",
+  "collectionName": "money_collections",
+  "info": {
+    "singularName": "money-collection",
+    "pluralName": "money-collections",
+    "displayName": "moneyCollection",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "maxLength": 50
+    },
+    "moneyNeeded": {
+      "type": "integer",
+      "required": true,
+      "min": 0
+    },
+    "collectionEndDate": {
+      "type": "date",
+      "required": true
+    },
+    "confirmed": {
+      "type": "boolean",
+      "default": false,
+      "required": true
+    },
+    "completed": {
+      "type": "boolean",
+      "required": true,
+      "default": false
+    },
+    "donationLink": {
+      "type": "string",
+      "required": true
+    },
+    "creator": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "money_collections"
+    },
+    "slp": {
+      "type": "string",
+      "minLength": 8,
+      "required": true
+    },
+    "titlePicture": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    }
+  }
+}

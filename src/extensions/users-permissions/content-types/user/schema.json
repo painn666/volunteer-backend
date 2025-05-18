@@ -1,0 +1,112 @@
+{
+  "kind": "collectionType",
+  "collectionName": "up_users",
+  "info": {
+    "name": "user",
+    "description": "",
+    "singularName": "user",
+    "pluralName": "users",
+    "displayName": "User"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "firstname": {
+      "type": "string",
+      "minLength": 3,
+      "unique": true,
+      "required": true
+    },
+    "surname": {
+      "type": "string",
+      "required": true,
+      "minLength": 3,
+      "maxLength": 20
+    },
+    "email": {
+      "type": "email",
+      "minLength": 6,
+      "required": true
+    },
+    "provider": {
+      "type": "string"
+    },
+    "password": {
+      "type": "password",
+      "minLength": 6,
+      "private": true,
+      "searchable": false
+    },
+    "resetPasswordToken": {
+      "type": "string",
+      "private": true,
+      "searchable": false
+    },
+    "confirmationToken": {
+      "type": "string",
+      "private": true,
+      "searchable": false
+    },
+    "confirmed": {
+      "type": "boolean",
+      "default": false
+    },
+    "blocked": {
+      "type": "boolean",
+      "default": false
+    },
+    "role": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.role",
+      "inversedBy": "users"
+    },
+    "volunteerCertificate": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "private": true,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "aid_requests": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::aid-request.aid-request",
+      "mappedBy": "aidRequester"
+    },
+    "aid_requests_taken": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::aid-request.aid-request",
+      "mappedBy": "designatedVolunteer"
+    },
+    "gender": {
+      "type": "boolean",
+      "required": true
+    },
+    "birthDate": {
+      "type": "date"
+    },
+    "phone": {
+      "type": "integer",
+      "required": true,
+      "min": 999999999,
+      "max": 999999999999
+    },
+    "money_collections": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::money-collection.money-collection",
+      "mappedBy": "creator"
+    },
+    "volunteer_request": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::volonteer-request.volonteer-request",
+      "inversedBy": "user"
+    }
+  }
+}

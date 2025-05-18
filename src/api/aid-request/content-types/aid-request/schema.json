@@ -1,0 +1,83 @@
+{
+  "kind": "collectionType",
+  "collectionName": "aid_requests",
+  "info": {
+    "singularName": "aid-request",
+    "pluralName": "aid-requests",
+    "displayName": "AidRequest",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "slp": {
+      "type": "string",
+      "required": true,
+      "minLength": 8,
+      "maxLength": 30
+    },
+    "phoneNumber": {
+      "type": "integer",
+      "min": 999999999,
+      "max": 999999999999,
+      "required": true
+    },
+    "descriptionOfAid": {
+      "type": "text",
+      "required": true,
+      "maxLength": 400
+    },
+    "additionalInformation": {
+      "type": "string"
+    },
+    "confirmed": {
+      "type": "boolean"
+    },
+    "completed": {
+      "type": "boolean"
+    },
+    "aidRequester": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "aid_requests"
+    },
+    "designatedVolunteer": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "aid_requests_taken"
+    },
+    "region": {
+      "type": "enumeration",
+      "enum": [
+        "Луганьска область",
+        "Донецька область",
+        "Запорізька область"
+      ],
+      "required": true
+    },
+    "town": {
+      "type": "string",
+      "required": true,
+      "minLength": 2,
+      "maxLength": 20
+    },
+    "directionOfAssistance": {
+      "type": "enumeration",
+      "enum": [
+        "Гуманітарна допомога",
+        "Евакуація та транспорт",
+        "Фізична допомога на місцях"
+      ],
+      "required": true
+    },
+    "completedDate": {
+      "type": "datetime"
+    },
+    "coordinates": {
+      "type": "json"
+    }
+  }
+}
