@@ -2,7 +2,7 @@ const crypto = require("crypto");
 const checkAuthentication = async (ctx) => {
   const authHeader = ctx.request.headers["authorization"];
   if (!authHeader) {
-    return ctx.unauthorized("Токен не найден");
+    return ctx.unauthorized("Токен не знайден");
   }
 
   const token = authHeader.replace("Bearer ", "");
@@ -56,7 +56,7 @@ async function getSelfData(ctx) {
   const authError = await checkAuthentication(ctx);
   if (authError == false) {
     return ctx.unauthorized(
-      "Токен не найден или не совпадает с id пользователя"
+      "Токен не знайдено або не збігається з id користувача"
     );
   }
 
@@ -71,11 +71,11 @@ async function getSelfData(ctx) {
       { populate: populateArray }
     );
     if (!user) {
-      return ctx.notFound("Пользователь не найден");
+      return ctx.notFound("Користувач не знайдений");
     }
     return { success: true, data: user };
   } catch (error) {
-    return ctx.internalServerError("Ошибка при создании запроса на помощь");
+    return ctx.internalServerError("Помилка під час створення запиту на допомогу");
   }
 }
 async function createAidRequest(ctx) {
@@ -83,7 +83,7 @@ async function createAidRequest(ctx) {
   const authError = await checkAuthentication(ctx);
   if (authError == false) {
     return ctx.unauthorized(
-      "Токен не найден или не совпадает с id пользователя"
+      "Токен не знайдено або не збігається з id користувача"
     );
   }
   try {
@@ -93,7 +93,7 @@ async function createAidRequest(ctx) {
       { populate: ["role"] }
     );
     if (!user) {
-      return ctx.notFound("Пользователь не найден");
+      return ctx.notFound("Користувач не знайден");
     }
 
     const userLastRequest =
@@ -108,7 +108,7 @@ async function createAidRequest(ctx) {
       !aidRequest.region &&
       !aidRequest.descriptionOfAid
     ) {
-      return ctx.badRequest("Запрос на помощь не имеет обязательных полей");
+      return ctx.badRequest("Запит на допомогу не має обов'язкових полів");
     }
     if (userLastRequest !== null) {
       const diff = getDiffInHours(
@@ -116,7 +116,7 @@ async function createAidRequest(ctx) {
         new Date()
       );
       if (diff < 1) {
-        return ctx.badRequest("Вы уже отправили заявку на помощь");
+        return ctx.badRequest("Ви вже відправили заявку на допомогу");
       }
     }
     const aidRequests = await strapi.entityService.create(
@@ -141,7 +141,7 @@ async function createAidRequest(ctx) {
   } catch (error) {
     console.log(error, error.details.errors);
 
-    return ctx.internalServerError("Ошибка при создании запроса на помощь");
+    return ctx.internalServerError("Помилка під час створення запиту на допомогу");
   }
 }
 async function getAidRequests(ctx) {
@@ -149,7 +149,7 @@ async function getAidRequests(ctx) {
   const authError = await checkAuthentication(ctx);
   if (authError == false) {
     return ctx.unauthorized(
-      "Токен не найден или не совпадает с id пользователя"
+      "Токен не знайдено або не збігається з id користувача"
     );
   }
 
@@ -160,10 +160,10 @@ async function getAidRequests(ctx) {
       { populate: ["role"] }
     );
     if (!user) {
-      return ctx.notFound("Пользователь не найден");
+      return ctx.notFound("Користувач не знайден");
     }
     if (user.role.name === "user") {
-      return ctx.unauthorized("Пользователь не имеет доступа к этой функции");
+      return ctx.unauthorized("Користувач не має доступу до цієї функції");
     }
     const aidRequests = await strapi.entityService.findMany(
       "api::aid-request.aid-request",
@@ -182,7 +182,7 @@ async function getAidRequests(ctx) {
       }),
     };
   } catch (error) {
-    return ctx.internalServerError("Ошибка при создании запроса на помощь");
+    return ctx.internalServerError("Помилка під час створення запиту на допомогу");
   }
 }
 async function completeAidRequest(ctx) {
@@ -190,7 +190,7 @@ async function completeAidRequest(ctx) {
   const authError = await checkAuthentication(ctx);
   if (authError == false) {
     return ctx.unauthorized(
-      "Токен не найден или не совпадает с id пользователя"
+      "Токен не знайдено або не збігається з id користувача"
     );
   }
 
@@ -201,10 +201,10 @@ async function completeAidRequest(ctx) {
       { populate: ["role", "aid_requests_taken"] }
     );
     if (!user) {
-      return ctx.notFound("Пользователь не найден");
+      return ctx.notFound("Користувач не знайден");
     }
     if (user.role.name === "user") {
-      return ctx.unauthorized("Пользователь не имеет доступа к этой функции");
+      return ctx.unauthorized("ПКористувач не має доступу до цієї функції");
     }
     const request = await strapi.entityService.findOne(
       "api::aid-request.aid-request",
@@ -213,7 +213,7 @@ async function completeAidRequest(ctx) {
     const diff = getDiffInHours(new Date(request.updatedAt), new Date());
     if (diff <= 12) {
       return ctx.badRequest(
-        "Запрос на помощь не может быть завершен раньше, чем через 12 часов после его принятия"
+        "Запит на допомогу не може бути завершений раніше, ніж через 12 годин після його прийняття"
       );
     }
     user.aid_requests_taken
@@ -225,7 +225,7 @@ async function completeAidRequest(ctx) {
         );
         if (diff <= 1) {
           return ctx.badRequest(
-            "Пользователь не может завершить запрос на помощь раньше, чем через 1 час после завершения предыдущего запроса"
+            "Користувач не може завершити запит на допомогу раніше, ніж через 1 годину після завершення попереднього запиту"
           );
         }
       });
@@ -243,7 +243,7 @@ async function completeAidRequest(ctx) {
   } catch (error) {
     console.log(error);
 
-    return ctx.internalServerError("Ошибка при создании запроса на помощь");
+    return ctx.internalServerError("Помилка під час створення запиту на допомогу");
   }
 }
 async function cancelAidRequest(ctx) {
@@ -253,7 +253,7 @@ async function cancelAidRequest(ctx) {
 
   if (authError == false) {
     return ctx.unauthorized(
-      "Токен не найден или не совпадает с id пользователя"
+      "Токен не знайдено або не збігається з id користувача"
     );
   }
 
@@ -264,10 +264,10 @@ async function cancelAidRequest(ctx) {
       { populate: ["role"] }
     );
     if (!user) {
-      return ctx.notFound("Пользователь не найден");
+      return ctx.notFound("Користувач не знайдений");
     }
     if (user.role.name === "volunteer") {
-      return ctx.unauthorized("Пользователь не имеет доступа к этой функции");
+      return ctx.unauthorized("Користувач не має доступу до цієї функції");
     }
 
     const aidRequest = await strapi.entityService.delete(
@@ -278,7 +278,7 @@ async function cancelAidRequest(ctx) {
   } catch (error) {
     console.log(error);
 
-    return ctx.internalServerError("Ошибка при создании запроса на помощь");
+    return ctx.internalServerError("Помилка під час створення запиту на допомогу");
   }
 }
 async function takeAidRequest(ctx) {
@@ -286,7 +286,7 @@ async function takeAidRequest(ctx) {
   const authError = await checkAuthentication(ctx);
   if (authError == false) {
     return ctx.unauthorized(
-      "Токен не найден или не совпадает с id пользователя"
+      "Токен не знайдено або не збігається з id користувача"
     );
   }
   console.log(aidId, userId);
@@ -298,11 +298,11 @@ async function takeAidRequest(ctx) {
       { populate: ["role"] }
     );
     if (!user) {
-      return ctx.notFound("Пользователь не найден");
+      return ctx.notFound("Користувач не знайдений");
     }
     console.count("take");
     if (user.role.name.name === "user") {
-      return ctx.unauthorized("Пользователь не имеет доступа к этой функции");
+      return ctx.unauthorized("Користувач не має доступу до цієї функції");
     }
     console.count("take");
     const aidRequest = await strapi.entityService.findOne(
@@ -319,7 +319,7 @@ async function takeAidRequest(ctx) {
     console.count("take");
     return { success: true, data: aidRequest };
   } catch (error) {
-    return ctx.internalServerError("Ошибка при взятии заявки на помощь");
+    return ctx.internalServerError("Помилка під час взяття заявки на допомогу");
   }
 }
 async function createMoneyCollection(ctx) {
@@ -327,7 +327,7 @@ async function createMoneyCollection(ctx) {
   const authError = await checkAuthentication(ctx);
   if (authError == false) {
     return ctx.unauthorized(
-      "Токен не найден или не совпадает с id пользователя"
+      "Токен не знайдено або не збігається з id користувача"
     );
   }
 
@@ -338,10 +338,10 @@ async function createMoneyCollection(ctx) {
       { populate: ["role", "money_collections"] }
     );
     if (!user) {
-      return ctx.notFound("Пользователь не найден");
+      return ctx.notFound("Користувач не знайдений");
     }
     if (user.role.name === "user") {
-      return ctx.unauthorized("Пользователь не имеет доступа к этой функции");
+      return ctx.unauthorized("Користувач не має доступу до цієї функції");
     }
     const userMoneyCollections = Array.isArray(user.money_collections)
       ? user.money_collections[user.money_collections.length - 1]
@@ -353,7 +353,7 @@ async function createMoneyCollection(ctx) {
         new Date()
       );
       if (diff <= 24) {
-        return ctx.badRequest("Вы уже создали сбор за последние 24 часа");
+        return ctx.badRequest("Ви вже створили збір за останні 24 години");
       }
     }
     if (
@@ -363,7 +363,7 @@ async function createMoneyCollection(ctx) {
       !collectionData.donationLink ||
       !collectionData.collectionEndDate
     ) {
-      return ctx.badRequest("Введены неправильные данные");
+      return ctx.badRequest("Введено невірні дані");
     }
     console.log(collectionData);
 
@@ -387,7 +387,7 @@ async function createMoneyCollection(ctx) {
   } catch (error) {
     console.log(error);
 
-    return ctx.internalServerError("Ошибка при создании запроса на помощь");
+    return ctx.internalServerError("Помилка під час створення запиту на допомогу");
   }
 }
 
@@ -398,7 +398,7 @@ async function becomeVolunteer(ctx) {
 
   if (authError == false) {
     return ctx.unauthorized(
-      "Токен не найден или не совпадает с id пользователя"
+      "Токен не знайдено або не збігається з id користувача"
     );
   }
 
@@ -409,14 +409,14 @@ async function becomeVolunteer(ctx) {
       { populate: ["role", "money_collections"] }
     );
     if (!user) {
-      return ctx.notFound("Пользователь не найден");
+      return ctx.notFound("Користувач не знайдений");
     }
     const volunteerRequests = Array.isArray(user.volunteer_request);
     if (user.role.name === "volunteer" || volunteerRequests) {
-      return ctx.unauthorized("Уже имеет заявку на волонтера");
+      return ctx.unauthorized("Вже має заявку на волонтера");
     }
     if (!volunteerFile) {
-      return ctx.badRequest("Введены неправильные данные");
+      return ctx.badRequest("Введено невірні дані");
     }
     console.log(volunteerFile);
 
@@ -434,7 +434,7 @@ async function becomeVolunteer(ctx) {
   } catch (error) {
     console.log(error);
 
-    return ctx.internalServerError("Ошибка при отправке заявки на волонтера");
+    return ctx.internalServerError("Помилка під час надсилання заявки на волонтера");
   }
 }
 
