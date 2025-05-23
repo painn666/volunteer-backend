@@ -30,7 +30,7 @@ module.exports = ({ strapi }) => ({
     const settings = await pluginStore.get({ key: "advanced" });
 
     if (!settings.allow_register) {
-      throw new ApplicationError("Регистрация временно отключена");
+      throw new ApplicationError("Реєстрація тимчасово відключена");
     }
 
     const { register } = strapi.config.get("plugin::users-permissions");
@@ -86,7 +86,7 @@ module.exports = ({ strapi }) => ({
       gender === undefined ||
       !birthDate
     ) {
-      return ctx.unauthorized("Введены неправильные данные");
+      return ctx.unauthorized("Введені неправильні дані");
     }
     let sanitizedPhone = phone;
 
@@ -97,7 +97,7 @@ module.exports = ({ strapi }) => ({
 
     const phoneRegex = /^[0-9]{6,12}$/; // только цифры, от 6 до 12
     if (!phoneRegex.test(sanitizedPhone)) {
-      throw new ValidationError("Неверный формат телефона");
+      throw new ValidationError("Неправильний формат телефону");
     }
 
     // Обновляем параметр phone в params
@@ -107,14 +107,14 @@ module.exports = ({ strapi }) => ({
       .query("plugin::users-permissions.role")
       .findOne({ where: { type: settings.default_role } });
     if (!role) {
-      throw new ApplicationError("Не удалось найти роль по умолчанию");
+      throw new ApplicationError("Не вдалося знайти роль за замовчуванням");
     }
 
     const existingUser = await strapi.db
       .query("plugin::users-permissions.user")
       .findOne({ where: { email: email } });
     if (existingUser) {
-      throw new ApplicationError("Такой пользователь уже существует");
+      throw new ApplicationError("Такий користувач уже існує");
     }
 
     try {
@@ -158,7 +158,7 @@ module.exports = ({ strapi }) => ({
       if (error instanceof ValidationError) {
         throw new ValidationError(error.message);
       } else {
-        throw new ApplicationError("Ошибка при регистрации пользователя");
+        throw new ApplicationError("Помилка під час реєстрації користувача");
       }
     }
   },
@@ -167,7 +167,7 @@ module.exports = ({ strapi }) => ({
 
     // Проверка, что оба параметра переданы
     if (!email || !password) {
-      return ctx.badRequest("Параметры email и password обязательны.");
+      return ctx.badRequest("Параметри email і password обов'язкові.");
     }
 
     // Поиск пользователя по номеру телефона
@@ -185,17 +185,17 @@ module.exports = ({ strapi }) => ({
         .service("user")
         .validatePassword(password, user.password))
     ) {
-      return ctx.unauthorized("Неверный логин или пароль.");
+      return ctx.unauthorized("Невірний логін або пароль.");
     }
 
     // Проверка, подтвержден ли аккаунт
     if (!user.confirmed) {
-      return ctx.unauthorized("Аккаунт не подтвержден.");
+      return ctx.unauthorized("Акаунт не підтверджено.");
     }
 
     // Проверка, заблокирован ли аккаунт
     if (user.blocked) {
-      return ctx.unauthorized("Аккаунт заблокирован.");
+      return ctx.unauthorized("Акаунт заблоковано.");
     }
 
     // Генерация JWT токена
