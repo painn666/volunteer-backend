@@ -75,13 +75,13 @@ module.exports = ({ strapi }) => ({
       !phone ||
       phone.length < 10 ||
       !password ||
-      password.length < 3 ||
+      password.length < 6 ||
       !email ||
       email.length < 6 ||
       !firstname ||
       firstname.length < 3 ||
       !surname ||
-      surname.length < 10 ||
+      surname.length < 3 ||
       gender === null ||
       gender === undefined ||
       !birthDate
