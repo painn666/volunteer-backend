@@ -117,11 +117,6 @@ module.exports = ({ strapi }) => ({
       throw new ApplicationError("Такой пользователь уже существует");
     }
 
-    // Проверяем, чтобы уровень не превышал 3
-    // if (referralLevel > 3) {
-    //   throw new ApplicationError('Превышен максимальный уровень реферальной глубины.');
-    // }
-
     try {
       // Создание нового пользователя
       const newUser = {
