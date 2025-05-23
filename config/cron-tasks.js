@@ -2,10 +2,6 @@ module.exports = {
   setExpiredCollections: {
     task: async ({ strapi }) => {
       try {
-        console.log(
-          `____________________Начата очистка просроченных сборов ${new Date()}____________________`
-        );
-
         const collections = await strapi.entityService.findMany(
           "api::money-collection.money-collection",
           1
@@ -33,12 +29,8 @@ module.exports = {
             }
           );
         });
-
-        console.log(
-          `____________________Закончена очистка просроченных сборов ${new Date()}____________________`
-        );
       } catch (err) {
-        console.error("Ошибка при сбросе просроченных сборов", err);
+        console.error("Error", err);
       }
     },
     options: {
@@ -49,11 +41,6 @@ module.exports = {
   checkValidVolunteerRequests: {
     task: async ({ strapi }) => {
       try {
-        console.log(
-          `____________________Начата автосортировка заявок на волонтёра ${new Date()}____________________`
-        );
-        console.log("TMP:", process.env.TMP);
-        console.log("TEMP:", process.env.TEMP);
         const requests = await strapi.entityService.findMany(
           "api::volonteer-request.volonteer-request",
           {
@@ -68,11 +55,8 @@ module.exports = {
           .findOne({
             where: { name: "volunteer" },
           });
-        console.log(volunteerRole);
 
         requests.forEach((item) => {
-          console.log(item);
-
           strapi.entityService.update(
             "plugin::users-permissions.user",
             item.user.id,
@@ -81,12 +65,8 @@ module.exports = {
             }
           );
         });
-
-        console.log(
-          `____________________Закончена автосортировка заявок на волонтёра ${new Date()}____________________`
-        );
       } catch (err) {
-        console.error("Ошибка при сортировка заявок на волонтёра", err);
+        console.error("Error", err);
       }
     },
     options: {
